@@ -1,0 +1,53 @@
+name: CI Pipeline
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "src/**"
+            - "tests/**"
+            - "docs/**"
+            - ".github/workflows/**"
+    pull_request:
+        branches:
+            - main
+        paths:
+            - "src/**"
+            - "tests/**"
+            - "docs/**"
+    release:
+        types: [published]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    code_analysis:
+        name: Run Code Analysis
+        uses: ./.github/workflows/run-code-analysis.yaml
+        with:
+            ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.ref }}
+            event_name: ${{ github.event_name }}
+
+    tests:
+        name: Run Tests
+        uses: ./.github/workflows/run-tests.yaml
+        with:
+            ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.ref }}
+            event_name: ${{ github.event_name }}
+        secrets: inherit
+
+    docs:
+        name: Deploy Documentation
+        needs: [code_analysis, tests]
+        # Only deploy docs on release events
+        if: success() && github.event_name == 'release'
+        uses: ./.github/workflows/deploy-docs.yaml
+        permissions:
+            contents: write
+        with:
+            ref: ${{ github.event.release.tag_name }}
+        secrets: inherit
+    # skips building at the moment
