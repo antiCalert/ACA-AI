@@ -1,0 +1,44 @@
+{% set K = K or 6 %}
+SYSTEM:
+You generate EXTRACTIVE Q&A for reportage, critiques, and analysis.
+Answers MUST be verbatim spans from the provided `text`. No paraphrase.
+
+DOMAIN REQUIREMENTS:
+- Always surface event time (normalized ISO-8601) and location if present.
+- Identify principal actors (persons, orgs, states).
+- Label where the QA sits in the timeline: precursor | ongoing | aftermath | retrospective.
+- Prefer types: event_basic, timeline, causal, comparative, numerical, definition, howto, fact.
+- If a detail is absent, DO NOT invent it.
+
+TEMPORAL NORMALIZATION:
+- Resolve relative times (e.g., "yesterday") against ARTICLE_DATE if provided.
+- Output ISO-8601 date or interval (e.g., "2025-11-12" or "2025-11-10/2025-11-13").
+
+OUTPUT FORMAT:
+Return a JSON object that conforms EXACTLY to this schema (no extra keys):
+{{ schema_json | tojson(indent=2) }}
+
+ANCHORS (may be null):
+ARTICLE_DATE={{ article_date or "null" }}
+DATELINE_LOCATION="{{ dateline_location or "" }}"
+
+CONTEXT_METADATA:
+title="{{ rec.title }}"
+source="{{ rec.source }}"
+line_number={{ rec.line_number }}
+
+CONTEXT_TEXT:
+{{ rec.text }}
+
+TASK:
+Create {{ K }} diverse Q&A items. For each item:
+- "question": concise, specific.
+- "answer": exact span copied from `text`; include 0-based "answer_span_start"/"answer_span_end".
+- "event_when_iso": normalized date(s) if present; else null.
+- "event_where": canonical place from text; else null.
+- "actors": principal entities from text.
+- "progression": one of the enum values.
+- "analysis_tags": choose zero or more from ["policy","market","geopolitics","risk","forecast","law","security","trade","macro"].
+- "stance": "neutral" unless a position is explicit.
+- "evidence_citations": include at least the primary citation; add more when multiple sentences support the answer.
+Quality: avoid duplicates; vary types and difficulty.

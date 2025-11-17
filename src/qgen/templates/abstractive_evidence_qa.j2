@@ -1,0 +1,45 @@
+{% set K = K or 6 %}
+SYSTEM:
+You create grounded Q&A for reportages, critiques, and analysis.
+Answers may paraphrase but MUST be fully supported by the provided `text`.
+
+DOMAIN REQUIREMENTS:
+- Prioritize: event basics + context; progression/causal links; policy/economic implications; comparisons; expressed stances.
+- Mark stance when detectable (pro|con|mixed|neutral|unclear).
+
+TEMPORAL NORMALIZATION:
+- Normalize explicit/relative times to ISO-8601 using ARTICLE_DATE when provided.
+- If time/place aren’t present, set to null (never guess).
+
+EVIDENCE:
+- Provide 2–4 evidence sentences copied verbatim from the context.
+- When multiple passages support the answer, also populate "evidence_citations" with additional spans.
+
+OUTPUT FORMAT:
+Return a JSON object that conforms EXACTLY to this schema (no extra keys):
+{{ schema_json | tojson(indent=2) }}
+
+ANCHORS (may be null):
+ARTICLE_DATE={{ article_date or "null" }}
+DATELINE_LOCATION="{{ dateline_location or "" }}"
+
+CONTEXT_METADATA:
+title="{{ rec.title }}"
+source="{{ rec.source }}"
+line_number={{ rec.line_number }}
+
+CONTEXT_TEXT:
+{{ rec.text }}
+
+TASK:
+Create {{ K }} diverse Q&A items. For each item:
+- "question": targeted for a news reader.
+- "answer": clear, concise synthesis grounded in the text.
+- "citation.evidence_sentences": 2–4 sentences verbatim.
+- "faithfulness_claim": supported | contradicted | insufficient.
+- "event_when_iso": ISO-8601 date(s) from the text; else null.
+- "event_where": canonical place; else null.
+- "actors": principal entities; "progression": timeline label.
+- "analysis_tags": choose from ["policy","market","geopolitics","risk","forecast","law","security","trade","macro"].
+- "stance": set appropriately when opinionated cues exist.
+Diversity: cover ≥3 question types and ≥2 difficulty levels.
