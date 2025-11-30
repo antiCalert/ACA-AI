@@ -1,7 +1,16 @@
+"""Spider to discover and download English PDF documents from thetricontinental.org.
+
+This spider crawls internal pages, filters out non-English sections and
+yields download requests for PDFs. The implementation is conservative and
+follows only internal links to avoid leaking to external domains.
+"""
+
 import scrapy
 
 
 class EnglishPDFDownloaderSpider(scrapy.Spider):
+    """Crawl the site and yield file download items for English PDFs."""
+
     name = "download_english"
     allowed_domains = ["thetricontinental.org"]
     start_urls = ["https://thetricontinental.org/"]
@@ -19,6 +28,11 @@ class EnglishPDFDownloaderSpider(scrapy.Spider):
     }
 
     def parse(self, response):
+        """Parse a page, yield file items and follow internal links.
+
+        The parser filters out non-English sections and avoids a set of
+        known blocking URL patterns.
+        """
         # Skip non-English language sections
         if any(lang in response.url for lang in ["/es/", "/pt/", "/fr/", "/zh/"]):
             return

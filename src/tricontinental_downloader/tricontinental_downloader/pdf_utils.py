@@ -1,23 +1,19 @@
-from typing import Optional
-import re
-import sys
+"""Utilities to convert text-based PDF files to Markdown.
+
+The functions in this module use pdfminer.six to extract text and then
+apply simple heuristics to group lines into paragraphs and detect
+headings/lists. This is intentionally lightweight and not an OCR tool.
+"""
+
 import argparse
 import glob
 import os
+import re
+import sys
+from typing import Optional
+
 from pdfminer.high_level import extract_text
 from tqdm import tqdm
-
-"""
-common_utils.py
-
-Simple, efficient converter for text-based PDFs to Markdown (no OCR).
-Depends on: pdfminer.six
-Install: pip install pdfminer.six
-
-Usage:
-    python common_utils.py "docs/*.pdf" -o outdir/
-    python common_utils.py input.pdf -o output.md
-"""
 
 
 def _is_list_item(line: str) -> bool:
@@ -78,7 +74,9 @@ def _normalize_paragraphs(text: str) -> str:
 
 
 def pdf_to_markdown(
-    input_path: str, output_path: Optional[str] = None, page_break: str = "\n\n---\n\n"
+    input_path: str,
+    output_path: Optional[str] = None,
+    page_break: str = "\n\n---\n\n",
 ) -> str:
     """
     Convert a text-based PDF to markdown.
@@ -101,8 +99,12 @@ def pdf_to_markdown(
 
 
 def main():
+    """Command-line interface to convert PDF(s) to Markdown files."""
     parser = argparse.ArgumentParser(
-        description="Convert text PDF(s) to Markdown (no OCR). Accepts glob patterns."
+        description=(
+            "Convert text PDF(s) to Markdown (no OCR). "
+            "Accepts glob patterns."
+        )
     )
     parser.add_argument(
         "-i",
@@ -113,7 +115,10 @@ def main():
     parser.add_argument(
         "-o",
         "--output",
-        help="Output markdown file path or directory. If omitted, writes .txt next to each input file or prints to stdout for single file.",
+        help=(
+            "Output markdown file path or directory. If omitted, writes a .txt "
+            "next to each input file or prints to stdout for a single file."
+        ),
     )
     parser.add_argument(
         "--no-page-break", action="store_true", help="Do not insert page break markers."
@@ -127,7 +132,8 @@ def main():
 
     page_break = "" if args.no_page_break else "\n\n---\n\n"
 
-    # Multiple files: convert each and write to corresponding .txt (same basename, .txt extension)
+    # Multiple files: convert each and write to corresponding .txt
+    # (same basename, .txt extension)
     if len(matches) > 1:
         for inpath in tqdm(matches):
             outpath = os.path.splitext(inpath)[0] + ".txt"
@@ -139,7 +145,8 @@ def main():
     inpath = matches[0]
     out = args.output
     if out:
-        # If output is a directory, place file inside with same basename and .txt extension
+        # If output is a directory,
+        # place file inside with same basename and .txt extension
         if os.path.isdir(out) or out.endswith(os.path.sep):
             base = os.path.splitext(os.path.basename(inpath))[0] + ".txt"
             out = os.path.join(out, base)

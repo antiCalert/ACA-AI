@@ -1,99 +1,102 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+"""Spider and downloader middleware for the tricontinental downloader.
+
+This module contains lightweight middleware hooks required by Scrapy. The
+implementations are intentionally minimal and mainly present to allow
+project-specific extensions later.
+"""
 
 from scrapy import signals
 
-# useful for handling different item types with a single interface
-
 
 class TricontinentalDownloaderSpiderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
-    # passed objects.
+    """Spider middleware hooks (minimal defaults).
+
+    This class supplies no-op implementations of the common middleware
+    hooks so projects can opt-in to overriding behaviours as needed.
+    """
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
+        """Create middleware instance from a crawler object.
+
+        This hook connects the spider_opened signal so middleware can
+        perform initialization when the spider starts.
+        """
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
+    def process_spider_input(self, _response, _spider):
+        """Process each incoming response before the spider parses it.
 
-        # Should return None or raise an exception.
+        Returning ``None`` continues normal processing. Implementations may
+        raise to signal errors.
+        """
         return None
 
-    def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
+    def process_spider_output(self, _response, result, _spider):
+        """Yield the results returned from the Spider.
 
-        # Must return an iterable of Request, or item objects.
-        for i in result:
-            yield i
+        Use ``yield from`` to forward the iterable without materializing it.
+        """
+        yield from result
 
-    def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
+    def process_spider_exception(self, _response, _exception, _spider):
+        """Handle exceptions raised during spider input processing.
 
-        # Should return either None or an iterable of Request or item objects.
-        pass
+        Returning ``None`` continues the exception propagation. Implementors
+        may return an iterable of Requests or items to recover.
+        """
+        return None
 
     async def process_start(self, start):
-        # Called with an async iterator over the spider start() method or the
-        # maching method of an earlier spider middleware.
+        """Pass through items/requests from an async start iterator.
+
+        This is a thin passthrough that yields each item or request
+        produced by the spider start coroutine.
+        """
         async for item_or_request in start:
             yield item_or_request
 
     def spider_opened(self, spider):
-        spider.logger.info("Spider opened: %s" % spider.name)
+        """Log spider opened event."""
+        spider.logger.info(f"Spider opened: {spider.name}")
 
 
 class TricontinentalDownloaderDownloaderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
+    """Downloader middleware hooks (default no-op implementations)."""
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
+        """Create downloader middleware from the crawler and connect signals."""
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
+    def process_request(self, _request, _spider):
+        """Inspect or modify a downloader request before it is sent.
 
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
+        Returning ``None`` continues normal processing.
+        """
         return None
 
-    def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
+    def process_response(self, _request, response, _spider):
+        """Return or replace the downloader response.
 
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
+        Typical implementations would inspect the response and optionally
+        return a different Request/Response. This default just passes it
+        through.
+        """
         return response
 
-    def process_exception(self, request, exception, spider):
-        # Called when a download handler or a process_request()
-        # (from other downloader middleware) raises an exception.
+    def process_exception(self, _request, _exception, _spider):
+        """Handle exceptions raised during downloader request processing.
 
-        # Must either:
-        # - return None: continue processing this exception
-        # - return a Response object: stops process_exception() chain
-        # - return a Request object: stops process_exception() chain
-        pass
+        Return ``None`` to continue exception handling; return a Response or
+        Request to short-circuit the chain.
+        """
+        return None
 
     def spider_opened(self, spider):
-        spider.logger.info("Spider opened: %s" % spider.name)
+        """Log spider opened event."""
+        spider.logger.info(f"Spider opened: {spider.name}")

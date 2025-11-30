@@ -1,11 +1,9 @@
-# Scrapy settings for tricontinental_downloader project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+"""Scrapy settings for the tricontinental_downloader project.
+
+This file contains a minimal set of settings used by the included spider
+and pipelines. For full Scrapy configuration options, consult the
+official Scrapy documentation.
+"""
 
 BOT_NAME = "tricontinental_downloader"
 
@@ -39,31 +37,31 @@ DOWNLOAD_DELAY = 1
 # }
 
 # Enable or disable spider middlewares
-# See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+# See Scrapy docs for spider middleware examples.
 # SPIDER_MIDDLEWARES = {
 #    "tricontinental_downloader.middlewares.TricontinentalDownloaderSpiderMiddleware": 543,
 # }
 
 # Enable or disable downloader middlewares
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+# See Scrapy docs for downloader middleware examples.
 # DOWNLOADER_MIDDLEWARES = {
 #    "tricontinental_downloader.middlewares.TricontinentalDownloaderDownloaderMiddleware": 543,
 # }
 
 # Enable or disable extensions
-# See https://docs.scrapy.org/en/latest/topics/extensions.html
+# See Scrapy extensions documentation for optional extensions.
 # EXTENSIONS = {
 #    "scrapy.extensions.telnet.TelnetConsole": None,
 # }
 
 # Configure item pipelines
-# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+# See Scrapy item pipeline documentation for pipeline configuration.
 # ITEM_PIPELINES = {
 #    "tricontinental_downloader.pipelines.TricontinentalDownloaderPipeline": 300,
 # }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
-# See https://docs.scrapy.org/en/latest/topics/autothrottle.html
+# See Scrapy autothrottle documentation for tuning options.
 # AUTOTHROTTLE_ENABLED = True
 # The initial download delay
 # AUTOTHROTTLE_START_DELAY = 5
@@ -76,7 +74,7 @@ DOWNLOAD_DELAY = 1
 # AUTOTHROTTLE_DEBUG = False
 
 # Enable and configure HTTP caching (disabled by default)
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
+# See Scrapy HTTP cache settings documentation for cache options.
 # HTTPCACHE_ENABLED = True
 # HTTPCACHE_EXPIRATION_SECS = 0
 # HTTPCACHE_DIR = "httpcache"

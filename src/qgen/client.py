@@ -1,10 +1,11 @@
-# qgen/client.py
+"""Thin wrapper around Google GenAI to produce model outputs as text."""
 from __future__ import annotations
+
 import os
 from typing import Any, Dict, Optional
+
 from google import genai
 from google.genai import types
-import json
 
 
 class LLMClient:
@@ -25,10 +26,10 @@ class LLMClient:
             **defaults,
         }
 
-    def generate_json(self, prompt: str, json_schema: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_json(self, prompt: str, _json_schema: Dict[str, Any]) -> str:
         """
-        Generate JSON strictly adhering to json_schema using Google GenAI.
-        Returns a parsed dict when possible, otherwise returns {"_raw": "<text>"}.
+        Generate JSON-like text using Google GenAI and return the model output as a
+        plain string. The caller may parse the string if desired.
         """
         base_sys = self.defaults.get("system_instruction", "") or ""
         schema_note = ""
@@ -50,25 +51,17 @@ class LLMClient:
         parts: list[str] = []
 
         # gather text parts from the first candidate if available
-        try:
-            candidate = response.candidates[0]
-        except Exception:
+        candidates = getattr(response, "candidates", None) or []
+        if not candidates:
             return {"_raw": ""}
 
-        for part in getattr(candidate.content, "parts", []) or []:
+        candidate = candidates[0]
+        for part in getattr(getattr(candidate, "content", None), "parts", []) or []:
             txt = getattr(part, "text", None)
             if txt:
                 parts.append(txt)
 
         text = "".join(parts).strip()
 
-        # Try to parse JSON; if parsing fails, return raw text under _raw
-        if not text:
-            return ""
-
-        try:
-            parsed = json.loads(text)
-            if isinstance(parsed, dict):
-                return text
-        except Exception:
-            return ""
+        # Always return the raw text output (empty string if none)
+        return text
