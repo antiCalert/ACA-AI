@@ -39,13 +39,15 @@ DOWNLOAD_DELAY = 1
 # Enable or disable spider middlewares
 # See Scrapy docs for spider middleware examples.
 # SPIDER_MIDDLEWARES = {
-#    "tricontinental_downloader.middlewares.TricontinentalDownloaderSpiderMiddleware": 543,
+#    "tricontinental_downloader.middlewares.\
+# TricontinentalDownloaderSpiderMiddleware": 543,
 # }
 
 # Enable or disable downloader middlewares
 # See Scrapy docs for downloader middleware examples.
 # DOWNLOADER_MIDDLEWARES = {
-#    "tricontinental_downloader.middlewares.TricontinentalDownloaderDownloaderMiddleware": 543,
+#    "tricontinental_downloader.middlewares.\
+# TricontinentalDownloaderDownloaderMiddleware": 543,
 # }
 
 # Enable or disable extensions

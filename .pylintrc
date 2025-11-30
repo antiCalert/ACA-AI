@@ -8,7 +8,7 @@ ignore-patterns=.*\.ipynb$|.*\.jsonl$
 [MESSAGES CONTROL]
 # Import errors often come from optional runtime deps not installed in the lint
 # environment; disable to reduce noise. Keep other checks enabled.
-disable=import-error,R0903
+disable=import-error,R0903, E0402
 
 [FORMAT]
 max-line-length=88
