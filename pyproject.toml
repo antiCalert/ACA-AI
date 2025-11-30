@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aca-ai"
+version = "0.1.0"
+description = "Question-Answer generation utilities and demo for ACA-AI project"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [ { name="UGcraft" } ]
+keywords = ["nlp", "qa", "question-generation", "genai"]
+
+dependencies = [
+    "pydantic>=2.0,<3",
+    "jinja2>=3.0",
+    "google-genai",
+    "datasets==4.4.1",
+    "numpy==2.3.5",
+    "pandas==2.3.3",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+    "isort",
+    "flake8",
+    "pre-commit",
+    "asttokens==3.0.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.urls]
+"Homepage" = "https://example.org/aca-ai"
+
+# Notes:
+# - This pyproject.toml uses PEP 621 metadata with setuptools as the build backend.
+# - Versions are minimal and conservative for main runtime deps; pin further if you need reproducible builds.
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
+
+[tool.ruff]
+line-length = 88
+extend-select = ["E", "F", "W", "C90"]
