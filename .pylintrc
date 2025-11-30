@@ -1,0 +1,22 @@
+[MASTER]
+# Ensure local src is on sys.path so pylint can resolve local imports
+init-hook='import sys; sys.path.insert(0, "src")'
+# Ignore Jupyter notebooks and data files (regex)
+# match filenames ending with .ipynb or .jsonl
+ignore-patterns=.*\.ipynb$|.*\.jsonl$
+
+[MESSAGES CONTROL]
+# Import errors often come from optional runtime deps not installed in the lint
+# environment; disable to reduce noise. Keep other checks enabled.
+disable=import-error,R0903
+
+[FORMAT]
+max-line-length=88
+
+[REPORTS]
+output-format=text
+score=yes
+
+[TYPECHECK]
+# If you have C-extensions or compiled modules, you can list them here
+ignored-modules=
