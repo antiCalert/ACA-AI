@@ -28,6 +28,9 @@ dev = [
     "pytest",
     "black",
     "ruff",
+    "isort",
+    "flake8",
+    "pre-commit",
 ]
 
 [tool.setuptools.packages.find]
@@ -39,3 +42,19 @@ where = ["src"]
 # Notes:
 # - This pyproject.toml uses PEP 621 metadata with setuptools as the build backend.
 # - Versions are minimal and conservative for main runtime deps; pin further if you need reproducible builds.
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
+
+[tool.ruff]
+line-length = 88
+extend-select = ["E", "F", "W", "C90"]
