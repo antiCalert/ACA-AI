@@ -16,15 +16,18 @@ from __future__ import annotations
 from typing import Optional
 import re
 import os
-import subprocess
 
 ISO_DATE_RE = re.compile(r"^\d{4}(-\d{2}){0,2}$")
 ISO_INTERVAL_RE = re.compile(r"^\d{4}(-\d{2}){0,2}\/\d{4}(-\d{2}){0,2}$")
 
+
 def _looks_iso(s: str) -> bool:
     return bool(ISO_DATE_RE.match(s) or ISO_INTERVAL_RE.match(s))
 
-def verify_event_when_iso(s: Optional[str], anchor_date: Optional[str]) -> Optional[str]:
+
+def verify_event_when_iso(
+    s: Optional[str], anchor_date: Optional[str]
+) -> Optional[str]:
     """
     If s already looks ISO, keep it. Otherwise, attempt to normalize via SUTime/HeidelTime
     when configured; if unavailable or fails, return None to avoid false precision.
@@ -46,6 +49,7 @@ def verify_event_when_iso(s: Optional[str], anchor_date: Optional[str]) -> Optio
 
     return None
 
+
 # --- Example stubs. Replace with your integration of choice. ---
 def _normalize_with_sutime(text: str, anchor: Optional[str]) -> Optional[str]:
     """
@@ -54,6 +58,7 @@ def _normalize_with_sutime(text: str, anchor: Optional[str]) -> Optional[str]:
     """
     # Placeholder: implement your call here. Return ISO string or None.
     return None
+
 
 def _normalize_with_heideltime(text: str, anchor: Optional[str]) -> Optional[str]:
     """

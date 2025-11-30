@@ -11,11 +11,19 @@ class LLMClient:
     """
     Thin wrapper around Google GenAI models to produce JSON outputs matching a schema.
     """
+
     def __init__(self, model: str, api_key: Optional[str] = None, **defaults: Any):
-        self.client = genai.Client(api_key=api_key or os.getenv("GOOGLE_AI_STUDIO_API_KEY"))
+        self.client = genai.Client(
+            api_key=api_key or os.getenv("GOOGLE_AI_STUDIO_API_KEY")
+        )
         self.model = model
         # allow an optional system_instruction in defaults
-        self.defaults = {"temperature": 0.2, "max_output_tokens": 2048, "system_instruction": "", **defaults}
+        self.defaults = {
+            "temperature": 0.2,
+            "max_output_tokens": 2048,
+            "system_instruction": "",
+            **defaults,
+        }
 
     def generate_json(self, prompt: str, json_schema: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -23,7 +31,7 @@ class LLMClient:
         Returns a parsed dict when possible, otherwise returns {"_raw": "<text>"}.
         """
         base_sys = self.defaults.get("system_instruction", "") or ""
-        schema_note = ''
+        schema_note = ""
         system_instruction = base_sys + schema_note
 
         config = types.GenerateContentConfig(
@@ -40,43 +48,27 @@ class LLMClient:
         )
 
         parts: list[str] = []
-        # gather text parts from the first candidate
-        candidate = response.candidates[0]
-        for part in candidate.content.parts:
-            if getattr(part, "text", None):
-                parts.append(part.text)
+
+        # gather text parts from the first candidate if available
+        try:
+            candidate = response.candidates[0]
+        except Exception:
+            return {"_raw": ""}
+
+        for part in getattr(candidate.content, "parts", []) or []:
+            txt = getattr(part, "text", None)
+            if txt:
+                parts.append(txt)
 
         text = "".join(parts).strip()
-        # print("LLMClient received text:", text)
 
-        return text
+        # Try to parse JSON; if parsing fails, return raw text under _raw
+        if not text:
+            return ""
 
-        # try:
-        #     return json.loads(text)
-        # except Exception:
-        #     return {"_raw": text}
-
-# from openai import OpenAI  # pip install openai>=1.40
-
-# class LLMClientOAI:
-#     """
-#     Thin wrapper around OpenAI Responses API using Structured Outputs.
-#     Docs: Structured outputs & Responses API.
-#     """
-#     def __init__(self, model: str, api_key: Optional[str] = None, **defaults: Any):
-#         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-#         self.model = model
-#         self.defaults = {"temperature": 0.2, "max_output_tokens": 2048, **defaults}
-
-#     def generate_json(self, prompt: str, json_schema: Dict[str, Any]) -> Dict[str, Any]:
-#         """
-#         Request JSON strictly adhering to json_schema.
-#         """
-#         resp = self.client.responses.create(
-#             model=self.model,
-#             input=[{"role": "user", "content": prompt}],
-#             response_format={"type": "json_schema", "json_schema": json_schema, "strict": True},
-#             **self.defaults,
-#         )
-#         # .output[0].content[0].text is common; SDK also offers .output_text
-#         return resp.output[0].content[0].text  # JSON string
+        try:
+            parsed = json.loads(text)
+            if isinstance(parsed, dict):
+                return text
+        except Exception:
+            return ""
