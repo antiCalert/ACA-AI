@@ -106,7 +106,7 @@ def main():
     args = parser.parse_args()
 
     pattern = args.input
-    matches = glob.glob(pattern+'*', recursive=True)
+    matches = glob.glob(pattern+'*.pdf', recursive=True)
     if not matches:
         sys.exit(f"No files matched pattern: {pattern}")
 
