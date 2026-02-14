@@ -2,15 +2,20 @@
 
 本项目意在为 ACA 开发微调模型用于网站端QA
 
+## 训练流程
+[请参考PDF](src/训练流程.pdf)
+
+## 量化流程
+
 ## 本地开发
 
-### 1. 环境要求
+### 环境要求
 
 ```
 python>=3.10
 ```
 
-### 📦 项目安装
+### 项目安装
 
 ```bash
 git clone https://github.com/UGcraft/ACA-AI.git
@@ -27,10 +32,6 @@ pip install -e .
 - 版本控制：Git & GitHub
 
 ---
-
-## 训练流程
-[请参考PDF](src/训练流程.pdf)
-
 ## 工作流
 
 本项目使用 GitHub Flow。所有工作都应遵循以下流程：（[具体请参考项目工作流指南](WORKFLOW.md)）
